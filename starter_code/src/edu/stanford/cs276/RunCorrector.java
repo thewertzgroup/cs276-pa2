@@ -3,6 +3,7 @@ package edu.stanford.cs276;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Set;
 
 public class RunCorrector {
 
@@ -78,6 +79,16 @@ public class RunCorrector {
 			/*
 			 * Your code here
 			 */
+			Set<String> candidates = CandidateGenerator.get().getCandidates(correctedQuery);
+			
+			// Score candidates.
+			for (String candidate : candidates)
+			{
+				//Integer score = score(candidate, languageModel, nsm);
+			}
+			
+			// Chose best candidate.
+			//correctedQuery = bestCandidate;
 			
 			
 			if ("extra".equals(extra)) {

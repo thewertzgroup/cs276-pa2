@@ -35,6 +35,18 @@ public class CandidateGenerator implements Serializable {
 		/*
 		 * Your code here
 		 */
+		
+		// Additions
+		
+		// Deletions
+		
+		// Transpositions
+		
+		// Substitutions
+		
+		// Candidates > 1 edit distance away from query will need to be pruned
+		
+		
 		return candidates;
 	}
 
