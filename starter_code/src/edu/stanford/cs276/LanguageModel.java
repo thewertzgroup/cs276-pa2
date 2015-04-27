@@ -21,10 +21,10 @@ public class LanguageModel implements Serializable
 	 * You need to implement more methods here as needed.
 	 * 
 	 * Your code here ...
-	 */
-	
+	 */	
 	Dictionary unigram = new Dictionary();
 	Dictionary bigram = new Dictionary();
+	
 	// Do not call constructor directly since this is a Singleton
 	private LanguageModel(String corpusFilePath) throws Exception 
 	{
@@ -37,6 +37,8 @@ public class LanguageModel implements Serializable
 
 		Debug d = new Debug();
 		d.setDev("dev");
+		
+		String separator = "|";
 
 		System.out.println("Constructing dictionaries...");
 		File dir = new File(corpusFilePath);
@@ -58,7 +60,7 @@ public class LanguageModel implements Serializable
 				for (int i=0; i<tokens.length-1; i++)
 				{
 					unigram.add(tokens[i]);
-					bigram.add(tokens[i] + tokens[i+1]);
+					bigram.add(tokens[i] + separator + tokens[i+1]);
 				}
 				unigram.add(tokens[tokens.length-1]);
 			}
