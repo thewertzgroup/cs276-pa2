@@ -21,6 +21,8 @@ public class EmpiricalCostModel implements EditCostModel{
 			/*
 			 * Your code here
 			 */
+			
+			System.out.println("noisy: " + noisy + " clean: " + clean);
 		}
 
 		input.close();

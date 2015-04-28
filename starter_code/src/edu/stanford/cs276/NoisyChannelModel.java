@@ -20,6 +20,15 @@ public class NoisyChannelModel implements Serializable
 	 * 
 	 * Your code here ...
 	 */
+	/*
+	 * Model P(R|Q), the probability that a user would enter a query R when he or she intended to
+	 * enter Q, i.e. the noise in the communication of the user’s intent to the query. To compute
+	 * the noisy channel probability, we quantify the difference between the candidate query
+	 * Q and the actual input R using the Damerau-Levenshtein distance. In the DamerauLevenshtein 
+	 * distance, the atomic operators defined are insertion, deletion, substitution
+	 * and transposition.
+	 */
+	
 	
 	// Don't call the constructor directly (singleton instance)
 	private NoisyChannelModel(String editsFile) throws Exception 

@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.util.Set;
 
 public class RunCorrector {
+	
+	private static boolean debug = true;
 
 	public static LanguageModel languageModel;
 	public static NoisyChannelModel nsm;
@@ -79,6 +81,13 @@ public class RunCorrector {
 			/*
 			 * Your code here
 			 */
+			
+			double P_of_Q = languageModel.P_of_Q(query);
+			
+			System.out.println(P_of_Q + " : " + query + "\n\n");
+			
+if (debug) continue;
+			
 			Set<String> candidates = CandidateGenerator.get().getCandidates(correctedQuery);
 			
 			// Score candidates.

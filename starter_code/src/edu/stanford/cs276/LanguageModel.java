@@ -15,6 +15,7 @@ import edu.stanford.cs276.util.Dictionary;
 
 public class LanguageModel implements Serializable 
 {
+	private static boolean debug = true;
 
 	private static LanguageModel lm_;
 	/* Feel free to add more members here.
@@ -30,15 +31,110 @@ public class LanguageModel implements Serializable
 	{
 		constructDictionaries(corpusFilePath);
 	}
+	
+	
+	public double P_of_Q(String Q)
+	{
+		String[] tokens = Q.trim().split("\\s+");
+
+		double P_of_Q = 0.0;
+		
+		double P_MLE_of_w1 = P_MLE_of_w1(tokens[0]);
+		
+		P_of_Q += P_MLE_of_w1 != 0.0 ? Math.log( P_MLE_of_w1 ) : P_MLE_of_w1;
+		
+		for (int i=1; i<tokens.length; i++)
+		{
+			double P_MLE_of_w2_given_w1 = P_MLE_of_w2_given_w1(tokens[i], tokens[i-1]);
+			
+			P_of_Q += P_MLE_of_w2_given_w1 != 0.0 ? Math.log( P_MLE_of_w2_given_w1 ) : P_MLE_of_w2_given_w1;
+		}
+		
+		return P_of_Q;
+	}
+	
+	
+	/*
+	 * P(w1)
+	 */
+	private double P_MLE_of_w1(String w1)
+	{
+		// P_MLE(w1) = count(w1) / T
+		
+		double result = unigram.count(w1) / unigram.termCount();
+		
+		if (debug)
+		{
+			System.out.println("P_MLE_of_w1:");
+			System.out.println("\tw1: " + w1);
+			System.out.println("\tcount: " + unigram.count(w1));
+			System.out.println("\ttermCount: " + unigram.termCount());
+			System.out.println("\tP_MLE(w1): " + result);
+		}
+		
+		return result;
+	}
 
 
+	/*
+	 * P_MLE(w2|w1)
+	 */
+	private double P_MLE_of_w2_given_w1(String w2, String w1)
+	{
+		// P_MLE(w2|w1) = P(w1,w2) / P(w1) = count(w1,w2) / count(w1)
+		
+		double bigram_count = bigram.count(w1 + " " + w2);
+		double unigram_count = unigram.count(w1);
+		
+		double result = unigram_count != 0.0 ? bigram_count / unigram_count : 0.0; // TODO: Handle divide by zero
+		
+		if (debug)
+		{
+			System.out.println("P_MLE_of_w2_given_w1:");
+			System.out.println("\tw1: " + w1);
+			System.out.println("\tw2: " + w2);
+			System.out.println("\tbigram count: " + bigram_count);
+			System.out.println("\tunigram count: " + unigram_count);
+			System.out.println("\tP_MLE(w2|w1): " + result);
+		}
+		
+		return result;
+	}
+	
+	
+	/*
+	 * Pint(w2|w1)
+	 */
+	private double P_int_of_w2_given_w1(String w2, String w1)
+	{
+		// P_int(w2|w1) = L*P_mle(w2) + (1-L)*P_mle(w2|w1)
+		
+		double P_MLE_of_w2 = P_MLE_of_w1(w2);
+		double P_MLE_of_w2_given_w1 = P_MLE_of_w2_given_w1(w2, w1);
+		
+		double result = Parameters.lambda * P_MLE_of_w2 + (1 - Parameters.lambda) * P_MLE_of_w2_given_w1;
+		
+		if (debug)
+		{
+			System.out.println("P_int_of_w2_given_w1:");
+			System.out.println("\tw1: " + w1);
+			System.out.println("\tw2: " + w2);
+			System.out.println("\tP_MLE_of_w2: " + P_MLE_of_w2);
+			System.out.println("\tP_MLE_of_w2_given_w1: " + P_MLE_of_w2_given_w1);
+			System.out.println("\tP_int(w2|w1): " + result);
+		}
+		
+		return result;
+	}
+	
+	
 	public void constructDictionaries(String corpusFilePath) throws Exception 
 	{
 
 		Debug d = new Debug();
 		d.setDev("dev");
 		
-		String separator = "|";
+		String separator = " ";
 
 		System.out.println("Constructing dictionaries...");
 		File dir = new File(corpusFilePath);
