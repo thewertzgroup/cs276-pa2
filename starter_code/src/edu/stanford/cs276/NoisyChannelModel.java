@@ -28,7 +28,11 @@ public class NoisyChannelModel implements Serializable
 	 * distance, the atomic operators defined are insertion, deletion, substitution
 	 * and transposition.
 	 */
-	
+	public double P_of_R_given_Q(String Q)
+	{
+		
+	}
+
 	
 	// Don't call the constructor directly (singleton instance)
 	private NoisyChannelModel(String editsFile) throws Exception 

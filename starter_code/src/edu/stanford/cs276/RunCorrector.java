@@ -80,20 +80,17 @@ public class RunCorrector {
 			String correctedQuery = query;
 			/*
 			 * Your code here
-			 */
-			
-			double P_of_Q = languageModel.P_of_Q(query);
-			
-			System.out.println(P_of_Q + " : " + query + "\n\n");
-			
-if (debug) continue;
+			 */			
+
+			// P(Q|R) = P(R|Q)P(Q)
 			
 			Set<String> candidates = CandidateGenerator.get().getCandidates(correctedQuery);
 			
 			// Score candidates.
-			for (String candidate : candidates)
+			for (String Q : candidates)
 			{
-				//Integer score = score(candidate, languageModel, nsm);
+				double P_of_Q_given_R = Math.log( nsm.P_of_R_given_Q(Q) ) + Parameters.mu * Math.log( languageModel.P_of_Q(Q) );
+				
 			}
 			
 			// Chose best candidate.

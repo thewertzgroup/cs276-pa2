@@ -1,6 +1,7 @@
 package edu.stanford.cs276;
 
-public class Parameters {
+public class Parameters 
+{
 
 	/*
 	 * P_int(w2|w1) interpolation of unigram probabilities and bigram probabilities
@@ -34,4 +35,5 @@ public class Parameters {
 	 * one gives you the best spelling correction accuracy.
 	 */
 	public static double mu = 1.0;
+	
 }
