@@ -3,7 +3,8 @@ package edu.stanford.cs276;
 
 public class BuildModels {
 
-	public static double MU = .05;
+	public static double MU = 0.5;
+	public static double LAMBDA = .05;
 	public static LanguageModel languageModel;
 	public static NoisyChannelModel noisyChannelModel;
 

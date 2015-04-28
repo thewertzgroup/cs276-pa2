@@ -3,10 +3,10 @@ package edu.stanford.cs276.util;
 import java.io.Serializable;
 import java.util.HashMap;
 
-public class Dictionary implements Serializable {
+public class Dictionary<A> implements Serializable {
 
 	private int termCount;
-	private HashMap<String, Integer> map;
+	private HashMap<A, Integer> map;
 
 	public int termCount() {
 		return termCount;
@@ -14,10 +14,10 @@ public class Dictionary implements Serializable {
 
 	public Dictionary() {
 		termCount = 0;
-		map = new HashMap<String, Integer>();
+		map = new HashMap<A, Integer>();
 	}
 
-	public void add(String term) {
+	public void add(A term) {
 
 		termCount++;
 		if (map.containsKey(term)) {
@@ -27,7 +27,7 @@ public class Dictionary implements Serializable {
 		}
 	}
 
-	public int count(String term) {
+	public int count(A term) {
 
 		if (map.containsKey(term)) {
 			return map.get(term);
