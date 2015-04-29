@@ -59,7 +59,8 @@ public class LanguageModel implements Serializable
 		{
 			double P_MLE_of_w2_given_w1 = P_MLE_of_w2_given_w1(tokens[i], tokens[i-1]);
 			
-			P_of_Q += P_MLE_of_w2_given_w1 != 0.0 ? Math.log( P_MLE_of_w2_given_w1 ) : P_MLE_of_w2_given_w1;
+			//P_of_Q += P_MLE_of_w2_given_w1 != 0.0 ? Math.log( P_MLE_of_w2_given_w1 ) : P_MLE_of_w2_given_w1;
+			P_of_Q += Math.log( P_MLE_of_w2_given_w1 ); // Let P_of_Q --> -Infinity
 		}
 		
 		return P_of_Q;
@@ -73,7 +74,7 @@ public class LanguageModel implements Serializable
 	{
 		// P_MLE(w1) = count(w1) / T
 		
-		double result = unigram.count(w1) / unigram.termCount();
+		double result = (double)unigram.count(w1) / (double)unigram.termCount();
 		
 		if (debug)
 		{

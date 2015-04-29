@@ -61,8 +61,8 @@ public class RunCorrector {
 			return;
 		}
 		
-for (Parameters.mu = 0.5; Parameters.mu >= 0.0; Parameters.mu -= 0.05)
-{	
+//for (Parameters.mu = 0.5; Parameters.mu >= 0.0; Parameters.mu -= 0.05)
+//{	
 		if (goldFilePath != null ){
 			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
 		}
@@ -155,6 +155,7 @@ if (candidateMap.containsValue(goldQuery)) candidateCorrectCount++;
 		System.out.printf("mu: %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.mu, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
 		System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
 		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
-}
+//}
+
 	}
 }
