@@ -41,8 +41,42 @@ public class Parameters
 	// public static double mu = 0.5;
 	// 0.13% out of 0.47% possible TOTAL CORRECT: 14 / 105 CANDIDATE CORRECT: 49 / 105
 
-	public static double mu = 0.25;
-	// 0.33% out of 0.59% possible TOTAL CORRECT: 23 / 70 CANDIDATE CORRECT: 41 / 70
+	public static double mu = 0.15;
+	// mu: 0.15 :: 0.48% out of 0.63% possible TOTAL CORRECT: 217 / 455 CANDIDATE CORRECT: 285 / 455
 
+	/*
+		mu: 0.50 :: 0.10% out of 0.63% possible TOTAL CORRECT: 46 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 2483 seconds 
+	
+		mu: 0.45 :: 0.12% out of 0.63% possible TOTAL CORRECT: 56 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 5073 seconds 
+	
+		mu: 0.40 :: 0.15% out of 0.63% possible TOTAL CORRECT: 68 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 7734 seconds 
+	
+		mu: 0.35 :: 0.18% out of 0.63% possible TOTAL CORRECT: 81 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 10352 seconds 
+	
+		mu: 0.30 :: 0.25% out of 0.63% possible TOTAL CORRECT: 116 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 12967 seconds 
+	
+		mu: 0.25 :: 0.34% out of 0.63% possible TOTAL CORRECT: 155 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 15634 seconds 
+	
+		mu: 0.20 :: 0.43% out of 0.63% possible TOTAL CORRECT: 194 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 18292 seconds 
+	
+		mu: 0.15 :: 0.48% out of 0.63% possible TOTAL CORRECT: 217 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 20965 seconds 
+		
+		mu: 0.10 :: 0.48% out of 0.63% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 23583 seconds 
+		
+		mu: 0.05 :: 0.48% out of 0.63% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 285 / 455
+		RUNNING TIME: 26265 seconds 
+		
+		mu: 0.00 :: 0.48% out of 0.51% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 231 / 455
+		RUNNING TIME: 28910 seconds 
+	*/
 
 }
