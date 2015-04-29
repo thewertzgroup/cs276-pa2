@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map;
 
 public class NoisyChannelModel implements Serializable 
 {
@@ -28,9 +29,11 @@ public class NoisyChannelModel implements Serializable
 	 * distance, the atomic operators defined are insertion, deletion, substitution
 	 * and transposition.
 	 */
-	public double P_of_R_given_Q(String Q)
+	public double P_of_R_given_Q(String R, Map.Entry<String, Integer> Q)
 	{
+		//return Math.log(0.5); // TODO: Change this to calculate P(R|Q)
 		
+		return ecm_.P_of_R_given_Q(R,Q);
 	}
 
 	

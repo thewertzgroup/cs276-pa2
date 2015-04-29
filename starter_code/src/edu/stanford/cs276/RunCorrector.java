@@ -3,6 +3,10 @@ package edu.stanford.cs276;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.util.Collections;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.SortedMap;
 import java.util.Set;
 
 public class RunCorrector {
@@ -57,10 +61,12 @@ public class RunCorrector {
 			return;
 		}
 		
+for (Parameters.mu = 0.5; Parameters.mu >= 0.0; Parameters.mu -= 0.05)
+{	
 		if (goldFilePath != null ){
 			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
 		}
-		
+
 		// Load models from disk
 		languageModel = LanguageModel.load(); 
 		nsm = NoisyChannelModel.load();
@@ -68,34 +74,46 @@ public class RunCorrector {
 		nsm.setProbabilityType(uniformOrEmpirical);
 		
 		int totalCount = 0;
+		int candidateCorrectCount = 0;
 		int yourCorrectCount = 0;
-		String query = null;
+		String R = null;
 		
 		/*
 		 * Each line in the file represents one query.  We loop over each query and find
 		 * the most likely correction
 		 */
-		while ((query = queriesFileReader.readLine()) != null) {
+		while ((R = queriesFileReader.readLine()) != null) {
 			
-			String correctedQuery = query;
+			String correctedQuery = R;
 			/*
 			 * Your code here
 			 */			
 
 			// P(Q|R) = P(R|Q)P(Q)
 			
-			Set<String> candidates = CandidateGenerator.get().getCandidates(correctedQuery);
+			SortedMap<Double, String> candidateMap = new TreeMap<>();
+			
+			Map<String, Integer> candidates = CandidateGenerator.get().getCandidates(correctedQuery, 1);
+			
+			// Consider Q == R, 0 edit distance.
+			candidates.put(R, 0);
 			
 			// Score candidates.
-			for (String Q : candidates)
+			for (Map.Entry<String, Integer> Q : candidates.entrySet())
 			{
-				double P_of_Q_given_R = Math.log( nsm.P_of_R_given_Q(Q) ) + Parameters.mu * Math.log( languageModel.P_of_Q(Q) );
+				double P_of_Q_given_R = nsm.P_of_R_given_Q(R,Q) + Parameters.mu * languageModel.P_of_Q(Q) ;
+				candidateMap.put(P_of_Q_given_R, Q.getKey());
+			}			
+			
+			double max = 1.0;
+			if (!candidateMap.isEmpty())
+			{
+				// Chose best candidate.
+				max = candidateMap.lastKey();
 				
+				//correctedQuery = bestCandidate
+				correctedQuery = candidateMap.get(max);
 			}
-			
-			// Chose best candidate.
-			//correctedQuery = bestCandidate;
-			
 			
 			if ("extra".equals(extra)) {
 				/*
@@ -112,16 +130,31 @@ public class RunCorrector {
 			// and output the running accuracy
 			if (goldFileReader != null) {
 				String goldQuery = goldFileReader.readLine();
+
 				if (goldQuery.equals(correctedQuery)) {
 					yourCorrectCount++;
 				}
+				
+else
+{
+	//System.out.println("Max: " + max + " Candidates contain gold?: " + candidateMap.containsValue(goldQuery));
+}
+if (candidateMap.containsValue(goldQuery)) candidateCorrectCount++;
+
 				totalCount++;
 			}
-			System.out.println(correctedQuery);
+			System.out.print(".");
+			//System.out.println(correctedQuery);
+			//System.out.printf("%1.2f%% out of %1.2f%% possible", (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
+			//System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
 		}
+		System.out.println();
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
-		// System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
+		System.out.printf("mu: %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.mu, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
+		System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
+		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
+}
 	}
 }

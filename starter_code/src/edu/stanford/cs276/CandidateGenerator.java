@@ -1,15 +1,19 @@
 package edu.stanford.cs276;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import edu.stanford.cs276.util.Pair;
 
 public class CandidateGenerator implements Serializable {
 
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	private static CandidateGenerator cg_;
 	
@@ -31,28 +35,35 @@ public class CandidateGenerator implements Serializable {
 					' ',','};
 	
 	// Generate all candidates for the target query
-	public Set<String> getCandidates(String query) throws Exception {
-		Set<String> candidates = new HashSet<String>();	
-		Set<String> additions = new HashSet<String>();
-		Set<String> deletions = new HashSet<String>();
-		Set<String> transpositions = new HashSet<String>();
-		Set<String> substitutions = new HashSet<String>();
+	public Map<String, Integer> getCandidates(String query, Integer distance) throws Exception {
 		/*
 		 * Your code here
 		 */
 		
+		LanguageModel languageModel = LanguageModel.load(); 
+
+		Map<String, Integer> candidates = new HashMap<>();
+		Map<String, Integer> additions = new HashMap<>();
+		Map<String, Integer> deletions = new HashMap<>();
+		Map<String, Integer> transpositions = new HashMap<>();
+		Map<String, Integer> substitutions = new HashMap<>();
+		
 		if (debug) System.out.println(query + " : \n");
 		
-		// Additions (user added a letter - delete it)
 		String candidate;
-		additions.add(candidate = query.substring(1,query.length()));
+
+		// Additions (user added a letter - delete it)
+		candidate = query.substring(1,query.length());
+		if (distance == 1 || languageModel.inDictionary(candidate)) additions.put(candidate, distance);
 		if (debug) System.out.println("\t" + candidate);
 		for (int i=1; i<query.length()-1; i++)
 		{
-			additions.add(candidate = query.substring(0,i) + query.substring(i+1,query.length()));
+			candidate = query.substring(0,i) + query.substring(i+1,query.length());
+			if (distance == 1 || languageModel.inDictionary(candidate)) additions.put(candidate, distance);
 			if (debug) System.out.println("\t" + candidate);
 		}
-		additions.add(candidate = query.substring(0, query.length()-1));
+		candidate = query.substring(0, query.length()-1);
+		if (distance == 1 || languageModel.inDictionary(candidate)) additions.put(candidate, distance);
 		if (debug) System.out.println("\t" + candidate);
 		
 		if (debug) System.out.println("Candidates after additions: " + additions.size() + "\n\n");		
@@ -62,7 +73,8 @@ public class CandidateGenerator implements Serializable {
 		{
 			for (int i=0; i<=query.length(); i++)
 			{
-				deletions.add(candidate = query.substring(0, i) + c + query.substring(i,query.length()));
+				candidate = query.substring(0, i) + c + query.substring(i,query.length());
+				if (distance == 1 || languageModel.inDictionary(candidate)) deletions.put(candidate, distance);
 				if (debug) System.out.println("\t" + candidate);
 			}
 		}
@@ -75,7 +87,8 @@ public class CandidateGenerator implements Serializable {
 			char temp = queryArray[i];
 			queryArray[i] = queryArray[i+1];
 			queryArray[i+1] = temp;
-			transpositions.add(candidate = new String(queryArray));
+			candidate = new String(queryArray);
+			if (distance == 1 || languageModel.inDictionary(candidate)) transpositions.put(candidate, distance);
 			if (debug) System.out.println("\t" + candidate);
 		}
 		if (debug) System.out.println("Candidates after transpositions: " + transpositions.size() + "\n\n");
@@ -87,7 +100,8 @@ public class CandidateGenerator implements Serializable {
 			{
 				char[] queryArray = query.toCharArray();
 				queryArray[i] = c;
-				substitutions.add(candidate = new String(queryArray));
+				candidate = new String(queryArray);
+				if (distance == 1 || languageModel.inDictionary(candidate)) substitutions.put(candidate, distance);
 				if (debug) System.out.println("\t" + candidate);
 			}
 		}
@@ -95,14 +109,23 @@ public class CandidateGenerator implements Serializable {
 
 		// Candidates > 1 edit distance away from query will need to be pruned
 		
-		candidates.addAll(additions);
-		candidates.addAll(deletions);
-		candidates.addAll(transpositions);
-		candidates.addAll(substitutions);
+		candidates.putAll(additions);
+		candidates.putAll(deletions);
+		candidates.putAll(transpositions);
+		candidates.putAll(substitutions);
 		
-		
-		System.exit(0);
-		
+		if (distance == 1) 
+		{
+			Map<String, Integer> finalCandidates = new HashMap<>();
+
+			for (String c : candidates.keySet())
+			{
+				finalCandidates.putAll(getCandidates(c, 2));
+				if (languageModel.inDictionary(c)) finalCandidates.put(c, distance);
+			}
+			return finalCandidates;
+		}
+				
 		return candidates;
 	}
 

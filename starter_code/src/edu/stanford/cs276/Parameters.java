@@ -14,7 +14,7 @@ public class Parameters
 	 * equally likely, i.e., having the same probability. Again, try different values for that
 	 * uniform probability, but in the beginning 0.01∼0.10 is appropriate.
 	 */
-	public static double uniform_probability = .05;
+	public static double edit_probability = .05;
 	
 	/*
 	 * A factor to consider in this model is that our input query, R, may indeed be the right
@@ -34,6 +34,15 @@ public class Parameters
 	 * At first start with µ = 1, and later, experiment with different values of µ to see which
 	 * one gives you the best spelling correction accuracy.
 	 */
-	public static double mu = 1.0;
 	
+	// public static double mu = 1.0;
+	// 0.02% out of 0.64% possible TOTAL CORRECT: 4 / 255 CANDIDATE CORRECT: 162 / 255
+
+	// public static double mu = 0.5;
+	// 0.13% out of 0.47% possible TOTAL CORRECT: 14 / 105 CANDIDATE CORRECT: 49 / 105
+
+	public static double mu = 0.25;
+	// 0.33% out of 0.59% possible TOTAL CORRECT: 23 / 70 CANDIDATE CORRECT: 41 / 70
+
+
 }

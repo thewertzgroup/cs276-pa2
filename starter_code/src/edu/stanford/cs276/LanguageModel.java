@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Map.Entry;
 
 import edu.stanford.cs276.util.Debug;
 import edu.stanford.cs276.util.Dictionary;
@@ -15,7 +16,7 @@ import edu.stanford.cs276.util.Dictionary;
 
 public class LanguageModel implements Serializable 
 {
-	private static boolean debug = true;
+	private static boolean debug = false;
 
 	private static LanguageModel lm_;
 	/* Feel free to add more members here.
@@ -33,9 +34,20 @@ public class LanguageModel implements Serializable
 	}
 	
 	
-	public double P_of_Q(String Q)
+	public boolean inDictionary(String Q)
 	{
 		String[] tokens = Q.trim().split("\\s+");
+		for (String token : tokens)
+		{
+			if (0 == unigram.count(token)) return false;
+		}
+		return true;
+	}
+	
+	
+	public double P_of_Q(Entry<String, Integer> q)
+	{
+		String[] tokens = q.getKey().trim().split("\\s+");
 
 		double P_of_Q = 0.0;
 		
