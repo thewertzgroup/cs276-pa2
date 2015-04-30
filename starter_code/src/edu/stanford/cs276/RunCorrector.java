@@ -89,6 +89,7 @@ public class RunCorrector {
 		final double pRgivenEqualQ = 0.90; // if the query itself is a candidate.
 		double log_pRgivenQ, log_pQgivenR, log_pQ;  
 		long endTimeInsideFor = 0, startTimeInsideFor= 0; 
+		String correctedQuery = " "; 
 	//	System.out.println("query = queriesFileReader.readLine())");
 		while ((query = queriesFileReader.readLine()) != null) {
 						
@@ -124,6 +125,8 @@ public class RunCorrector {
 			*/
 		//	startTimeInsideFor   = System.currentTimeMillis();
 			// generate the candidates (already pruned)
+			if(uniformOrEmpirical.equals("empirical"))
+			{ 
 			Set<Pair<String,ArrayList<Character>>> candidates = CandidateGenerator.get().getCandidates(query, languageModel);
 			
 			// score the candidates
@@ -162,7 +165,7 @@ public class RunCorrector {
 			);
 			
 		//	String correctedQuery = candidatesScores.get(candidatesScores.size()-1).getFirst(); // highest score at the end
-			String correctedQuery = bestCandidate.getFirst(); // bestCandidate
+			correctedQuery = bestCandidate.getFirst(); // bestCandidate
 		//	endTimeInsideFor   = System.currentTimeMillis();
 		//	System.out.println("lowest score = " + candidatesScores.get(0).getSecond().toString()); 
 		//	System.out.println("highest score = " + candidatesScores.get(candidatesScores.size()-1).getSecond().toString()); 
@@ -175,8 +178,51 @@ public class RunCorrector {
 				 * implementations without the "extra" parameter.
 				 */	
 			}
-			
-
+			} 
+			else if(uniformOrEmpirical.equals("uniform"))
+			{ 
+				Set<Pair<String,Integer>> candidates = CandidateGenerator.get().getCandidatesUnif(query, languageModel);
+				
+				// score the candidates
+				ArrayList<Pair<String, Double>> candidatesScores = new ArrayList<>();
+				// first the query itself can be a candidate
+				if(languageModel.IsInDictionary(query))
+				{ 				 
+					log_pQ = languageModel.computePQ(query);		
+			//		System.out.println("log_pQ=" + log_pQ); 
+					log_pQgivenR = Math.log(pRgivenEqualQ) + BuildModels.MU*log_pQ; 
+					//	System.out.println("pRgivenEqualQ  = " + pRgivenEqualQ + " log_pQ = " + log_pQ + " log_pQgivenR=" + log_pQgivenR);
+					candidatesScores.add(new Pair<String, Double>(query, log_pQgivenR));
+				} 
+				
+				for(Pair<String, Integer> candidate: candidates)
+				{ 
+					log_pRgivenQ = nsm.ecm_.editProbability(candidate.getFirst(), query, candidate.getSecond()); //  = BuildModels.MU;				
+					log_pQ = languageModel.computePQ(candidate.getFirst());
+					log_pQgivenR = log_pRgivenQ + BuildModels.MU*log_pQ;
+					//System.out.println("log_pRgivenQ  = " + log_pRgivenQ + " log_pQ = " + log_pQ + " log_pQgivenR=" + log_pQgivenR);
+					candidatesScores.add(new Pair<String, Double>(candidate.getFirst(), log_pQgivenR));
+				} 
+				
+				//sort the candidates based on their score
+			//	System.out.println("# of candidates is " + candidatesScores.size()); 
+				Pair<String, Double> bestCandidate = Collections.max(candidatesScores, new Comparator<Pair<String, Double>>() 
+				{
+					@Override 
+					public int compare(Pair<String, Double> x, Pair<String, Double> y) 
+					{
+					//	if(x.getSecond().equals(y.getSecond()))
+					//		return x.getFirst().compareTo(y.getFirst());
+					//	else 
+							return x.getSecond().compareTo(y.getSecond());
+					}
+				}
+				);
+				
+			//	String correctedQuery = candidatesScores.get(candidatesScores.size()-1).getFirst(); // highest score at the end
+				correctedQuery = bestCandidate.getFirst(); // bestCandidate
+			//	System.out.println("#candidates = " + candidates.size());
+			}
 			// If a gold file was provided, compare our correction to the gold correction
 			// and output the running accuracy
 			if (goldFileReader != null) {

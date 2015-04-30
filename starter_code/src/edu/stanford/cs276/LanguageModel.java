@@ -37,12 +37,13 @@ public class LanguageModel implements Serializable {
 		} 
 		return true; 
 	}
+	// most likely in dictionary: not 100%
 	public boolean IsInDictionary(int firstIndex, int lastIndex, ArrayList<Pair<Integer, Integer>> errorIntervals)
 	{ 
 		
 		for(Pair<Integer, Integer> errorInterval: errorIntervals)
 		{ 
-			if( (firstIndex<=errorInterval.getFirst() &&  errorInterval.getFirst() <= lastIndex) || (firstIndex<=errorInterval.getSecond() &&  errorInterval.getSecond() <= lastIndex) )
+			if( (firstIndex<=(errorInterval.getFirst()+1) &&  (errorInterval.getFirst()+1) <= lastIndex) || (firstIndex<=(errorInterval.getSecond()-1) &&  (errorInterval.getSecond()-1) <= lastIndex) )
 				return false; 
 		}
 		return true;  

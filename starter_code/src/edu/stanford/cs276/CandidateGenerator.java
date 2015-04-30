@@ -43,8 +43,18 @@ public class CandidateGenerator implements Serializable {
 				// splits
 				ArrayList<Pair<String, String>>splits = new ArrayList<>(); 
 				String left, right;
-				if(wrongWords.size() == 0) // correct input query
+			//	if(wrongWords.size() > 3)
+				//{ 
+				//	return edit1; 
+				//}
+				//else 
+					if(wrongWords.size() == 0) // correct input query
 				{ 
+						// add code that computes P(Q) and compares it to high threshold
+						// if it is larger, then just return without attempting to correct. 
+					if(lm.computePQ(query)> BuildModels.correctQueryCuttoff)
+						return edit1; 
+				
 					for(int charInd = 0; charInd < query.length(); charInd++)
 					{ 
 						left  = query.substring(0, charInd); 
@@ -431,28 +441,181 @@ public class CandidateGenerator implements Serializable {
 		return edit1;			
 	} 
 	
+	// Generate all candidates for the target query with edit distance 1
+			public Set<String> getEdit1Unif(String query, boolean finalEdit, LanguageModel lm) throws Exception {
+				 
+
+					
+					ArrayList<Pair<Integer, Integer>> wrongWords = lm.findError(query);
+					Set<String> edit1 = new HashSet<String>();	
+					String oneCandidate; 
+					// splits
+					ArrayList<Pair<String, String>>splits = new ArrayList<>(); 
+					String left, right;
+				//	if(wrongWords.size() > 3)
+				//	{ 
+				//		return edit1; 
+				//	}
+					//else 
+						if(wrongWords.size() == 0) // correct input query
+					{ 
+							// add code that computes P(Q) and compares it to high threshold
+							// if it is larger, then just return without attempting to correct. 
+							if(lm.computePQ(query)> BuildModels.correctQueryCuttoff)
+							{ 
+							//	System.out.println("out"); 
+								return edit1;
+							} 
+						for(int charInd = 0; charInd < query.length(); charInd++)
+						{ 
+							left  = query.substring(0, charInd); 
+							right = query.substring(charInd);
+							 
+							splits.add(new Pair<String, String>(left,right)); 
+							
+						/*	if(!finalEdit)
+								splits.add(new Pair<String, String>(left,right)); 
+							else 
+							{ 
+								int lastSpace = left.lastIndexOf(' ');
+								String leftQuery=""; 
+								if (lastSpace ==-1)
+									splits.add(new Pair<String, String>(left,right));
+								else 
+									leftQuery = left.substring(0, lastSpace);
+								int firstSpace = right.indexOf(' '); 
+								String rightQuery=""; 
+								if (firstSpace ==-1)
+									splits.add(new Pair<String, String>(left,right)); 
+								else
+									rightQuery = right.substring(firstSpace+1);
+								if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(leftQuery) && lm.IsInDictionary(rightQuery))
+									splits.add(new Pair<String, String>(left,right));
+									
+							} 
+							*/
+							
+						} 
+					} 
+					else 
+					{ 
+						for(Pair<Integer, Integer>wrongWord: wrongWords)
+						{ 
+							for(int charInd = wrongWord.getFirst(); charInd < wrongWord.getSecond(); charInd++)
+							{ 
+								left  = query.substring(0, charInd); 
+								right = query.substring(charInd);
+								 
+								if(!finalEdit)
+									splits.add(new Pair<String, String>(left,right)); 
+								else 
+								{ 
+									int lastSpace = left.lastIndexOf(' ');
+									String leftQuery=""; 
+									if (lastSpace ==-1)
+										splits.add(new Pair<String, String>(left,right));
+									else 
+										leftQuery = left.substring(0, lastSpace);
+									int firstSpace = right.indexOf(' '); 
+									String rightQuery=""; 
+									if (firstSpace ==-1)
+										splits.add(new Pair<String, String>(left,right)); 
+									else
+										rightQuery = right.substring(firstSpace+1);
+									
+								//	if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(0, lastSpace, wrongWords) && lm.IsInDictionary(firstSpace, query.length(), wrongWords))
+									if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(leftQuery) && lm.IsInDictionary(rightQuery))
+										splits.add(new Pair<String, String>(left,right));
+										
+								} 
+								
+								
+							} 
+							
+						}
+					}
+					//deletes
+					Set<String>deletes = new HashSet<String>();	 		
+					for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+					{
+						if(!splits.get(splitInd).getSecond().isEmpty())			
+						{ 
+							oneCandidate = splits.get(splitInd).getFirst() + splits.get(splitInd).getSecond().substring(1); // delete the first character in second splitted string																								 							 													
+							deletes.add(oneCandidate);
+							 
+						} 
+					}		
+				    //transporses
+					Set<String>transporses = new HashSet<String>();	 
+					for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+					{
+						if(splits.get(splitInd).getSecond().length()>1)			
+						{ 
+							oneCandidate = splits.get(splitInd).getFirst() + splits.get(splitInd).getSecond().charAt(1) 
+									     + splits.get(splitInd).getSecond().charAt(0) +  splits.get(splitInd).getSecond().substring(2); // transporse the first  and secondcharacter in second splitted string
+							transporses.add(oneCandidate);
+							
+						} 
+					}	
+					// substitutes
+					Set<String>replaces = new HashSet<String>();	 
+					for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+					{
+						if(!splits.get(splitInd).getSecond().isEmpty())			
+						{ 
+							for(int alphInd = 0; alphInd < alphabet.length; alphInd++)
+							{ 
+								oneCandidate = splits.get(splitInd).getFirst() + alphabet[alphInd]  
+											 +  splits.get(splitInd).getSecond().substring(1); // replace the first  character in second splitted string by a character from alphabet						
+								
+								replaces.add(oneCandidate);
+							 
+							} 
+						} 
+					}
+							
+					// inserts
+					Set<String>inserts = new HashSet<String>();	 
+					for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+					{
+							for(int alphInd = 0; alphInd < alphabet.length; alphInd++)
+							{ 
+								oneCandidate = splits.get(splitInd).getFirst() + alphabet[alphInd]  
+											 +  splits.get(splitInd).getSecond().substring(0); // Insert before the first  character in second splitted string, a character from alphabet
+								inserts.add(oneCandidate);
+							} 			
+					}	
+					edit1.addAll(deletes);
+					edit1.addAll(transporses);
+					edit1.addAll(replaces); 
+					edit1.addAll(inserts);
+					return edit1;			
+				} 
+	
 	// Generate all candidates for the target query
 	// added the language model as we need it for pruning
-	public Set<Pair<String,Integer>> getCandidatesOrig(String query, LanguageModel lm) throws Exception {
+	public Set<Pair<String,Integer>> getCandidatesUnif(String query, LanguageModel lm) throws Exception {
 		Set<Pair<String, Integer>> candidates = new HashSet<Pair<String, Integer>>();	
 		/*
 		 * Your code here
 		 */		
 		// should we add the original query????
 		//???
+		boolean finalEdit = false; 
 		Set<String> edit1, edit2;
 		// get candidates at edit distance 1
-		edit1  = getEdit1Orig(query); 
+		edit1  = getEdit1Unif(query, finalEdit,lm); 
 		// get candidates at edit distance 2
-		for(String e1: edit1)
+		for(String  e1: edit1)
 		{ 
 			if(lm.IsInDictionary(e1)) // pruning, all the words in the candidate query must be in the dictionary learned from the corpus 
-				candidates.add(new Pair<String, Integer>(e1, 1)); // candidate at edit distance 1
-			edit2 = getEdit1Orig(e1);
+				candidates.add(new Pair<String, Integer>(e1,1)); // candidate at edit distance 1
+			finalEdit = true; 
+			edit2 = getEdit1Unif(e1,finalEdit,lm); 
 			for(String e2: edit2)
 			{ 				
 				if(lm.IsInDictionary(e2)) // pruning, all the words in the candidate query must be in the dictionary learned from the corpus
-					candidates.add(new Pair<String, Integer>(e2, 2)); // candidate at edit distance 2
+					candidates.add(new Pair<String, Integer>(e2,2)); // candidate at edit distance 2
 			}
 		}  
 		return candidates;
