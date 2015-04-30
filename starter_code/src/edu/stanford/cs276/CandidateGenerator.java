@@ -1,6 +1,7 @@
 package edu.stanford.cs276;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import edu.stanford.cs276.util.Pair;
 
@@ -135,18 +139,31 @@ public class CandidateGenerator implements Serializable, Callable {
 		
 		if (distance == 1) 
 		{
-			Map<String, Integer> finalCandidates = new HashMap<>();
+	        final ExecutorService service;
+	        service = Executors.newFixedThreadPool(8);
+	        
+			ArrayList<Future<Map<String, Integer>>> tasks = new ArrayList<Future<Map<String, Integer>>>();
 
+			Map<String, Integer> finalCandidates = new HashMap<>();
+			
 			for (String c : candidates.keySet())
 			{
-				if (languageModel.inDictionary(c)) finalCandidates.put(c, distance);
-				
-				Map<String, Integer> c2Candidates = getCandidates(c, 2);
+				tasks.add(service.submit(new CandidateGenerator(c, 2)));
+				if (languageModel.inDictionary(c)) finalCandidates.put(c, distance);				
+			}
+			for (Future<Map<String, Integer>> task : tasks)
+			{
+				//Map<String, Integer> c2Candidates = getCandidates(c, 2); // Implemented in Call(...);
+				Map<String, Integer> c2Candidates = task.get(); 
 				for (String c2 : c2Candidates.keySet())
 				{
 					if (null == finalCandidates.get(c2)) finalCandidates.put(c2, 2); // Don't step on a level 1 candidate.
 				}
+
 			}
+			
+			if (service.shutdownNow().size() > 0) throw new RuntimeException("All getCandidates() tasks not finished.");
+			
 			return finalCandidates;
 		}
 				
