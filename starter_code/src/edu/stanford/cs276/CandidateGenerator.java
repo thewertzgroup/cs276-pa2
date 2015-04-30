@@ -150,7 +150,7 @@ public class CandidateGenerator implements Serializable, Callable {
 			for (String c : candidates.keySet())
 			{
 				tasks.add(service.submit(new CandidateGenerator(c, 2)));
-				if (languageModel.distance(c) == 0) finalCandidates.put(c, distance);				
+				if (languageModel.distance(c) + languageModel.bigramDistance(c) == 0) finalCandidates.put(c, distance);				
 			}
 			for (Future<Map<String, Integer>> task : tasks)
 			{

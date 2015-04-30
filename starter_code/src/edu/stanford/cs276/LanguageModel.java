@@ -56,16 +56,15 @@ public class LanguageModel implements Serializable
 		{
 			if (0 == unigram.count(token)) distance++;
 		}
-/*
+
 		// Handle spaces
 		int k = Q.indexOf("  ", 0);
 		while (k >= 0)
 		{
 			distance++;
-			k += 2;
-			
+			k = Q.indexOf("  ", k+2);
 		}
-*/
+
 		return distance;
 	}
 	
