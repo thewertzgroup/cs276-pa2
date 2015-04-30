@@ -17,6 +17,8 @@ import edu.stanford.cs276.util.Dictionary;
 public class LanguageModel implements Serializable 
 {
 	private static boolean debug = false;
+	
+	private static String separator = " ";
 
 	private static LanguageModel lm_;
 	/* Feel free to add more members here.
@@ -42,6 +44,42 @@ public class LanguageModel implements Serializable
 			if (0 == unigram.count(token)) return false;
 		}
 		return true;
+	}
+	
+	
+	public int distance(String Q)
+	{
+		int distance = 0;
+		
+		String[] tokens = Q.trim().split("\\s+");
+		for (String token : tokens)
+		{
+			if (0 == unigram.count(token)) distance++;
+		}
+/*
+		// Handle spaces
+		int k = Q.indexOf("  ", 0);
+		while (k >= 0)
+		{
+			distance++;
+			k += 2;
+			
+		}
+*/
+		return distance;
+	}
+	
+	public int bigramDistance(String Q)
+	{			
+		int distance = 0;
+		
+		String[] tokens = Q.trim().split("\\s+");
+		for (int i=0; i<tokens.length-1; i++)
+		{
+			if (0 == bigram.count(tokens[i] + separator + tokens[i+1])) distance++;
+//			else if (!Q.contains(tokens[i] + separator + tokens[i+1])) distance++; // Handle spaces
+		}
+		return distance;
 	}
 	
 	
@@ -155,8 +193,6 @@ public class LanguageModel implements Serializable
 		Debug d = new Debug();
 		d.setDev("dev");
 		
-		String separator = " ";
-
 		System.out.println("Constructing dictionaries...");
 		File dir = new File(corpusFilePath);
 		for (File file : dir.listFiles()) 

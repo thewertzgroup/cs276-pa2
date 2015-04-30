@@ -20,11 +20,11 @@ public class CandidateGenerator implements Serializable, Callable {
 
 	private static boolean debug = false;
 	
-	private static String query_;
-	private static Integer distance_;
-
 	private static CandidateGenerator cg_;
 	
+	private String query_;
+	private Integer distance_;
+
 	// Don't use the constructor since this is a Singleton instance
 	private CandidateGenerator() {}
 	
@@ -72,19 +72,20 @@ public class CandidateGenerator implements Serializable, Callable {
 		if (debug) System.out.println(query + " : \n");
 		
 		String candidate;
+		int maxDistance = 2;
 
 		// Additions (user added a letter - delete it)
 		candidate = query.substring(1,query.length());
-		if (distance == 1 || languageModel.inDictionary(candidate)) /*additions*/candidates.put(candidate, distance);
+		if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*additions*/candidates.put(candidate, distance);
 		if (debug) System.out.println("\t" + candidate);
 		for (int i=1; i<query.length()-1; i++)
 		{
 			candidate = query.substring(0,i) + query.substring(i+1,query.length());
-			if (distance == 1 || languageModel.inDictionary(candidate)) /*additions*/candidates.put(candidate, distance);
+			if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*additions*/candidates.put(candidate, distance);
 			if (debug) System.out.println("\t" + candidate);
 		}
 		candidate = query.substring(0, query.length()-1);
-		if (distance == 1 || languageModel.inDictionary(candidate)) /*additions*/candidates.put(candidate, distance);
+		if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*additions*/candidates.put(candidate, distance);
 		if (debug) System.out.println("\t" + candidate);
 		
 		if (debug) System.out.println("Candidates after additions: " + /*additions*/candidates.size() + "\n\n");		
@@ -95,7 +96,7 @@ public class CandidateGenerator implements Serializable, Callable {
 			for (int i=0; i<=query.length(); i++)
 			{
 				candidate = query.substring(0, i) + c + query.substring(i,query.length());
-				if (distance == 1 || languageModel.inDictionary(candidate)) /*deletions*/candidates.put(candidate, distance);
+				if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*deletions*/candidates.put(candidate, distance);
 				if (debug) System.out.println("\t" + candidate);
 			}
 		}
@@ -109,7 +110,7 @@ public class CandidateGenerator implements Serializable, Callable {
 			queryArray[i] = queryArray[i+1];
 			queryArray[i+1] = temp;
 			candidate = new String(queryArray);
-			if (distance == 1 || languageModel.inDictionary(candidate)) /*transpositions*/candidates.put(candidate, distance);
+			if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*transpositions*/candidates.put(candidate, distance);
 			if (debug) System.out.println("\t" + candidate);
 		}
 		if (debug) System.out.println("Candidates after transpositions: " + /*transpositions*/candidates.size() + "\n\n");
@@ -122,7 +123,7 @@ public class CandidateGenerator implements Serializable, Callable {
 				char[] queryArray = query.toCharArray();
 				queryArray[i] = c;
 				candidate = new String(queryArray);
-				if (distance == 1 || languageModel.inDictionary(candidate)) /*substitutions*/candidates.put(candidate, distance);
+				if (distance + languageModel.distance(candidate) + languageModel.bigramDistance(candidate) <= maxDistance) /*substitutions*/candidates.put(candidate, distance);
 				if (debug) System.out.println("\t" + candidate);
 			}
 		}
@@ -144,12 +145,12 @@ public class CandidateGenerator implements Serializable, Callable {
 	        
 			ArrayList<Future<Map<String, Integer>>> tasks = new ArrayList<Future<Map<String, Integer>>>();
 
-			Map<String, Integer> finalCandidates = new HashMap<>();
+			Map<String, Integer> finalCandidates = new ConcurrentHashMap<>();
 			
 			for (String c : candidates.keySet())
 			{
 				tasks.add(service.submit(new CandidateGenerator(c, 2)));
-				if (languageModel.inDictionary(c)) finalCandidates.put(c, distance);				
+				if (languageModel.distance(c) == 0) finalCandidates.put(c, distance);				
 			}
 			for (Future<Map<String, Integer>> task : tasks)
 			{
