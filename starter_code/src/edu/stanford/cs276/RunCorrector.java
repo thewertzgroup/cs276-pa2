@@ -61,8 +61,10 @@ public class RunCorrector {
 			return;
 		}
 		
-//for (Parameters.mu = 0.5; Parameters.mu >= 0.0; Parameters.mu -= 0.05)
-//{	
+		
+		
+for (Parameters.edit_probability = 0.01; Parameters.edit_probability <= 0.10; Parameters.edit_probability += 0.01)
+{	
 		if (goldFilePath != null ){
 			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
 		}
@@ -153,9 +155,10 @@ if (candidateMap.containsValue(goldQuery)) candidateCorrectCount++;
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		System.out.printf("mu: %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.mu, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
+		System.out.printf("P(edit): %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.edit_probability, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
 		System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
 		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
-//}
+}
 
 	}
 }

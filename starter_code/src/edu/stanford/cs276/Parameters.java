@@ -5,6 +5,16 @@ public class Parameters
 
 	/*
 	 * P_int(w2|w1) interpolation of unigram probabilities and bigram probabilities
+	 * 
+	 * To take into account the data sparsity problem where some bigrams that appear in
+	 * the queries might not be in our training corpus, we interpolate unigram probabilities
+	 * with the bigram probabilities to get our final interpolated conditional probabilities.
+	 * 
+	 * 		Pint(w2|w1) = λPmle(w2) + (1 − λ)Pmle(w2|w1)
+	 * 
+	 * Try setting λ to a small value in the beginning, say 0.1, and later experiment with
+	 * varying this parameter to see if you can get better correction accuracies on the development
+	 * dataset. However, be careful not to overfit your development dataset. It might 
 	 */
 	public static double lambda = 0.1;
 	
@@ -15,6 +25,38 @@ public class Parameters
 	 * uniform probability, but in the beginning 0.01∼0.10 is appropriate.
 	 */
 	public static double edit_probability = .05;
+	/*	
+	 * P(edit): 0.01 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 2542 seconds 
+	 *
+	 * P(edit): 0.02 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 5141 seconds 
+	 *
+	 * P(edit): 0.03 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 7744 seconds 
+	 *
+	 * P(edit): 0.04 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 10395 seconds 
+	 *
+	 * P(edit): 0.05 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 13060 seconds 
+	 *
+	 * P(edit): 0.06 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 15656 seconds 
+	 *
+	 * P(edit): 0.07 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 18260 seconds 
+	 *
+	 * P(edit): 0.08 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 20854 seconds 
+	 *
+	 * P(edit): 0.09 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 23530 seconds 
+	 *
+	 * P(edit): 0.10 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
+	 * RUNNING TIME: 26283 seconds
+	 */
+	
 	
 	/*
 	 * A factor to consider in this model is that our input query, R, may indeed be the right
@@ -35,14 +77,8 @@ public class Parameters
 	 * one gives you the best spelling correction accuracy.
 	 */
 	
-	// public static double mu = 1.0;
-	// 0.02% out of 0.64% possible TOTAL CORRECT: 4 / 255 CANDIDATE CORRECT: 162 / 255
-
-	// public static double mu = 0.5;
-	// 0.13% out of 0.47% possible TOTAL CORRECT: 14 / 105 CANDIDATE CORRECT: 49 / 105
-
 	public static double mu = 0.15;
-	// mu: 0.15 :: 0.48% out of 0.63% possible TOTAL CORRECT: 217 / 455 CANDIDATE CORRECT: 285 / 455
+	//  TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
 
 	/*
 		mu: 0.50 :: 0.10% out of 0.63% possible TOTAL CORRECT: 46 / 455 CANDIDATE CORRECT: 285 / 455

@@ -30,6 +30,9 @@ public class BuildModels {
 
 		languageModel =  LanguageModel.create(trainingCorpus);
 		noisyChannelModel = NoisyChannelModel.create(editsFile);
+		
+System.out.println("System.exit(0)");
+System.exit(0);
 
 		// Save the models to disk
 		noisyChannelModel.save();
