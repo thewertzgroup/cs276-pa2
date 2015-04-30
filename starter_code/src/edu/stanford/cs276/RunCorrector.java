@@ -3,7 +3,10 @@ package edu.stanford.cs276;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.SortedMap;
@@ -63,8 +66,8 @@ public class RunCorrector {
 		
 		
 		
-for (Parameters.edit_probability = 0.01; Parameters.edit_probability <= 0.10; Parameters.edit_probability += 0.01)
-{	
+//for (Parameters.edit_probability = 0.01; Parameters.edit_probability <= 0.10; Parameters.edit_probability += 0.01)
+//{	
 		if (goldFilePath != null ){
 			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
 		}
@@ -133,22 +136,28 @@ for (Parameters.edit_probability = 0.01; Parameters.edit_probability <= 0.10; Pa
 			if (goldFileReader != null) {
 				String goldQuery = goldFileReader.readLine();
 
+//System.out.print(".");
+System.out.println(correctedQuery);
 				if (goldQuery.equals(correctedQuery)) {
 					yourCorrectCount++;
 				}
 				
 else
 {
-	//System.out.println("Max: " + max + " Candidates contain gold?: " + candidateMap.containsValue(goldQuery));
+	System.out.println("Max: " + max + " Candidates contain gold?: " + candidateMap.containsValue(goldQuery));
 }
 if (candidateMap.containsValue(goldQuery)) candidateCorrectCount++;
 
 				totalCount++;
+System.out.printf("%1.2f%% out of %1.2f%% possible", (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
+System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
+long currentTime = System.currentTimeMillis();
+long remainingTime = ((currentTime - startTime) / totalCount) * (455 - totalCount);
+Date eta = new Date(currentTime + remainingTime);
+DateFormat formatter = new SimpleDateFormat("HH:mm:ss:SSS");
+System.out.println("REMAINING TIME: " + (remainingTime / 1000 / 60) + " minutes.  TOTAL TIME: " + (((currentTime - startTime) / totalCount) * 455 / 1000 / 60) + " minutes.  ETA: " + formatter.format(eta));
+System.out.println();
 			}
-			System.out.print(".");
-			//System.out.println(correctedQuery);
-			//System.out.printf("%1.2f%% out of %1.2f%% possible", (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
-			//System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
 		}
 		System.out.println();
 		queriesFileReader.close();
@@ -157,8 +166,8 @@ if (candidateMap.containsValue(goldQuery)) candidateCorrectCount++;
 		System.out.printf("mu: %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.mu, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
 		System.out.printf("P(edit): %1.2f :: %1.2f%% out of %1.2f%% possible", Parameters.edit_probability, (double)yourCorrectCount / (double)totalCount, (double)candidateCorrectCount / (double)totalCount);
 		System.out.println(" TOTAL CORRECT: " + yourCorrectCount + " / " + totalCount + " CANDIDATE CORRECT: " + candidateCorrectCount + " / " + totalCount + "\n");
-		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
-}
+		System.out.println("RUNNING TIME: "+totalTime/1000/60 +" minutes ");
+//}
 
 	}
 }

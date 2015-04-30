@@ -16,7 +16,8 @@ public class Parameters
 	 * varying this parameter to see if you can get better correction accuracies on the development
 	 * dataset. However, be careful not to overfit your development dataset. It might 
 	 */
-	public static double lambda = 0.1;
+	public static boolean interpolated = true;
+	public static double lambda = 0.01;
 	
 	/*
 	 * The uniform cost edit distance model simplifies the computation of the noisy channel
@@ -77,7 +78,7 @@ public class Parameters
 	 * one gives you the best spelling correction accuracy.
 	 */
 	
-	public static double mu = 0.15;
+	public static double mu = 0.5;
 	//  TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
 
 	/*

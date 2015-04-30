@@ -57,10 +57,18 @@ public class LanguageModel implements Serializable
 		
 		for (int i=1; i<tokens.length; i++)
 		{
-			double P_MLE_of_w2_given_w1 = P_MLE_of_w2_given_w1(tokens[i], tokens[i-1]);
-			
-			//P_of_Q += P_MLE_of_w2_given_w1 != 0.0 ? Math.log( P_MLE_of_w2_given_w1 ) : P_MLE_of_w2_given_w1;
-			P_of_Q += Math.log( P_MLE_of_w2_given_w1 ); // Let P_of_Q --> -Infinity
+			if (Parameters.interpolated)
+			{
+				double P_int_of_w2_given_w1 = P_int_of_w2_given_w1(tokens[i], tokens[i-1]);
+				
+				P_of_Q += Math.log( P_int_of_w2_given_w1 ); // Let P_of_Q --> -Infinity
+			}
+			else
+			{
+				double P_MLE_of_w2_given_w1 = P_MLE_of_w2_given_w1(tokens[i], tokens[i-1]);
+				
+				P_of_Q += Math.log( P_MLE_of_w2_given_w1 ); // Let P_of_Q --> -Infinity
+			}
 		}
 		
 		return P_of_Q;
