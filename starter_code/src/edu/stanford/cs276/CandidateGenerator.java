@@ -138,7 +138,7 @@ public class CandidateGenerator implements Serializable, Callable {
 		candidates.putAll(substitutions);
 		*/
 		
-		if (distance == 1) 
+		if (distance < maxDistance) 
 		{
 	        final ExecutorService service;
 	        service = Executors.newFixedThreadPool(8);
@@ -149,8 +149,8 @@ public class CandidateGenerator implements Serializable, Callable {
 			
 			for (String c : candidates.keySet())
 			{
-				tasks.add(service.submit(new CandidateGenerator(c, 2)));
-				if (languageModel.distance(c) + languageModel.bigramDistance(c) == 0) finalCandidates.put(c, distance);				
+				tasks.add(service.submit(new CandidateGenerator(c, distance+1)));
+				if (distance + languageModel.distance(c) + languageModel.bigramDistance(c) <= maxDistance-1) finalCandidates.put(c, distance);				
 			}
 			for (Future<Map<String, Integer>> task : tasks)
 			{
@@ -158,7 +158,7 @@ public class CandidateGenerator implements Serializable, Callable {
 				Map<String, Integer> c2Candidates = task.get(); 
 				for (String c2 : c2Candidates.keySet())
 				{
-					if (null == finalCandidates.get(c2)) finalCandidates.put(c2, 2); // Don't step on a level 1 candidate.
+					if (null == finalCandidates.get(c2)) finalCandidates.put(c2, distance+1); // Don't step on a level 1 candidate.
 				}
 
 			}

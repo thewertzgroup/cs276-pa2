@@ -14,10 +14,61 @@ public class Parameters
 	 * 
 	 * Try setting λ to a small value in the beginning, say 0.1, and later experiment with
 	 * varying this parameter to see if you can get better correction accuracies on the development
-	 * dataset. However, be careful not to overfit your development dataset. It might 
+	 * dataset. However, be careful not to overfit your development dataset.
 	 */
 	public static boolean interpolated = true;
 	public static double lambda = 0.01;
+	/*
+	lambda: 0.01 :: 0.78% out of 0.88% possible
+	mu: 0.50 :: 0.78% out of 0.88% possible
+	P(edit): 0.05 :: 0.78% out of 0.88% possible TOTAL CORRECT: 353 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 1 minutes 
+
+	lambda: 0.02 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 1 minutes 
+
+	lambda: 0.03 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 2 minutes 
+
+	lambda: 0.04 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 3 minutes 
+
+	lambda: 0.05 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 3 minutes 
+
+	lambda: 0.06 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 4 minutes 
+
+	lambda: 0.07 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 4 minutes 
+
+	lambda: 0.08 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 5 minutes 
+
+	lambda: 0.09 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 6 minutes 
+
+	lambda: 0.10 :: 0.77% out of 0.88% possible
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455	
+	RUNNING TIME: 6 minutes 
+	 */
 	
 	/*
 	 * The uniform cost edit distance model simplifies the computation of the noisy channel
@@ -27,36 +78,46 @@ public class Parameters
 	 */
 	public static double edit_probability = .05;
 	/*	
-	 * P(edit): 0.01 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 2542 seconds 
-	 *
-	 * P(edit): 0.02 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 5141 seconds 
-	 *
-	 * P(edit): 0.03 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 7744 seconds 
-	 *
-	 * P(edit): 0.04 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 10395 seconds 
-	 *
-	 * P(edit): 0.05 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 13060 seconds 
-	 *
-	 * P(edit): 0.06 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 15656 seconds 
-	 *
-	 * P(edit): 0.07 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 18260 seconds 
-	 *
-	 * P(edit): 0.08 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 20854 seconds 
-	 *
-	 * P(edit): 0.09 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 23530 seconds 
-	 *
-	 * P(edit): 0.10 :: 0.55% out of 0.60% possible TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-	 * RUNNING TIME: 26283 seconds
-	 */
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.01 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 1 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.02 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 1 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.03 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 2 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.04 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 3 minutes 
+	
+	mu: 0.50 :: 0.78% out of 0.88% possible
+	P(edit): 0.05 :: 0.78% out of 0.88% possible TOTAL CORRECT: 353 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 4 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.06 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 5 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.07 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 5 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.08 :: 0.77% out of 0.88% possible TOTAL CORRECT: 349 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 6 minutes 
+	
+	mu: 0.50 :: 0.76% out of 0.88% possible
+	P(edit): 0.09 :: 0.76% out of 0.88% possible TOTAL CORRECT: 348 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 7 minutes 
+	
+	mu: 0.50 :: 0.77% out of 0.88% possible
+	P(edit): 0.10 :: 0.77% out of 0.88% possible TOTAL CORRECT: 350 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 8 minutes 
+*/
 	
 	
 	/*
@@ -78,42 +139,87 @@ public class Parameters
 	 * one gives you the best spelling correction accuracy.
 	 */
 	
-	public static double mu = 0.5;
-	//  TOTAL CORRECT: 251 / 455 CANDIDATE CORRECT: 271 / 455
-
+	public static double mu = 0.50;
 	/*
-		mu: 0.50 :: 0.10% out of 0.63% possible TOTAL CORRECT: 46 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 2483 seconds 
+	mu: 0.00 :: 0.48% out of 0.80% possible
+	P(edit): 0.05 :: 0.48% out of 0.80% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 364 / 455
+	RUNNING TIME: 1 minutes 
 	
-		mu: 0.45 :: 0.12% out of 0.63% possible TOTAL CORRECT: 56 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 5073 seconds 
+	mu: 0.05 :: 0.66% out of 0.88% possible
+	P(edit): 0.05 :: 0.66% out of 0.88% possible TOTAL CORRECT: 301 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 1 minutes 
 	
-		mu: 0.40 :: 0.15% out of 0.63% possible TOTAL CORRECT: 68 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 7734 seconds 
+	mu: 0.10 :: 0.67% out of 0.88% possible
+	P(edit): 0.05 :: 0.67% out of 0.88% possible TOTAL CORRECT: 304 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 2 minutes 
 	
-		mu: 0.35 :: 0.18% out of 0.63% possible TOTAL CORRECT: 81 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 10352 seconds 
+	mu: 0.15 :: 0.70% out of 0.88% possible
+	P(edit): 0.05 :: 0.70% out of 0.88% possible TOTAL CORRECT: 320 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 3 minutes 
 	
-		mu: 0.30 :: 0.25% out of 0.63% possible TOTAL CORRECT: 116 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 12967 seconds 
+	mu: 0.20 :: 0.73% out of 0.88% possible
+	P(edit): 0.05 :: 0.73% out of 0.88% possible TOTAL CORRECT: 334 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 4 minutes 
+
+	mu: 0.25 :: 0.76% out of 0.88% possible
+	P(edit): 0.05 :: 0.76% out of 0.88% possible TOTAL CORRECT: 347 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 4 minutes 
+
+	mu: 0.30 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 5 minutes 
+
+	mu: 0.35 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 6 minutes 
 	
-		mu: 0.25 :: 0.34% out of 0.63% possible TOTAL CORRECT: 155 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 15634 seconds 
+	mu: 0.40 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 7 minutes 
 	
-		mu: 0.20 :: 0.43% out of 0.63% possible TOTAL CORRECT: 194 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 18292 seconds 
+	mu: 0.45 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 352 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 7 minutes 
+
+	mu: 0.50 :: 0.78% out of 0.88% possible
+	P(edit): 0.05 :: 0.78% out of 0.88% possible TOTAL CORRECT: 353 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 8 minutes 
 	
-		mu: 0.15 :: 0.48% out of 0.63% possible TOTAL CORRECT: 217 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 20965 seconds 
-		
-		mu: 0.10 :: 0.48% out of 0.63% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 23583 seconds 
-		
-		mu: 0.05 :: 0.48% out of 0.63% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 285 / 455
-		RUNNING TIME: 26265 seconds 
-		
-		mu: 0.00 :: 0.48% out of 0.51% possible TOTAL CORRECT: 219 / 455 CANDIDATE CORRECT: 231 / 455
-		RUNNING TIME: 28910 seconds 
+	mu: 0.55 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 351 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 9 minutes 
+	
+	mu: 0.60 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 349 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 10 minutes 
+	
+	mu: 0.65 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 350 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 10 minutes 
+	
+	mu: 0.70 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 349 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 11 minutes 
+	
+	mu: 0.75 :: 0.77% out of 0.88% possible
+	P(edit): 0.05 :: 0.77% out of 0.88% possible TOTAL CORRECT: 349 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 12 minutes 
+	
+	mu: 0.80 :: 0.76% out of 0.88% possible
+	P(edit): 0.05 :: 0.76% out of 0.88% possible TOTAL CORRECT: 347 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 13 minutes 
+	
+	mu: 0.85 :: 0.76% out of 0.88% possible
+	P(edit): 0.05 :: 0.76% out of 0.88% possible TOTAL CORRECT: 344 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 13 minutes 
+	
+	mu: 0.90 :: 0.75% out of 0.88% possible
+	P(edit): 0.05 :: 0.75% out of 0.88% possible TOTAL CORRECT: 341 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 14 minutes 
+	
+	mu: 0.95 :: 0.74% out of 0.88% possible
+	P(edit): 0.05 :: 0.74% out of 0.88% possible TOTAL CORRECT: 337 / 455 CANDIDATE CORRECT: 402 / 455
+	RUNNING TIME: 15 minutes 
 	*/
 
 }
