@@ -33,8 +33,172 @@ public class CandidateGenerator implements Serializable {
 					'0','1','2','3','4','5','6','7','8','9',
 					' ',','};
 
+	
 	// Generate all candidates for the target query with edit distance 1
-	public Set<Pair<String, ArrayList<Character>>> getEdit1(String query, boolean finalEdit, LanguageModel lm) throws Exception {
+		public Set<Pair<String, ArrayList<Character>>> getEdit1(String query, boolean finalEdit, LanguageModel lm) throws Exception {
+			 
+				ArrayList<Pair<Integer, Integer>> wrongWords = lm.findError(query);
+				Set<Pair<String, ArrayList<Character>>> edit1 = new HashSet<Pair<String, ArrayList<Character>>>();	
+				String oneCandidate; 
+				// splits
+				ArrayList<Pair<String, String>>splits = new ArrayList<>(); 
+				String left, right;
+				if(wrongWords.size() == 0) // correct input query
+				{ 
+					for(int charInd = 0; charInd < query.length(); charInd++)
+					{ 
+						left  = query.substring(0, charInd); 
+						right = query.substring(charInd);
+						 
+						splits.add(new Pair<String, String>(left,right)); 
+						
+					/*	if(!finalEdit)
+							splits.add(new Pair<String, String>(left,right)); 
+						else 
+						{ 
+							int lastSpace = left.lastIndexOf(' ');
+							String leftQuery=""; 
+							if (lastSpace ==-1)
+								splits.add(new Pair<String, String>(left,right));
+							else 
+								leftQuery = left.substring(0, lastSpace);
+							int firstSpace = right.indexOf(' '); 
+							String rightQuery=""; 
+							if (firstSpace ==-1)
+								splits.add(new Pair<String, String>(left,right)); 
+							else
+								rightQuery = right.substring(firstSpace+1);
+							if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(leftQuery) && lm.IsInDictionary(rightQuery))
+								splits.add(new Pair<String, String>(left,right));
+								
+						} 
+						*/
+						
+					} 
+				} 
+				else 
+				{ 
+					for(Pair<Integer, Integer>wrongWord: wrongWords)
+					{ 
+						for(int charInd = wrongWord.getFirst(); charInd < wrongWord.getSecond(); charInd++)
+						{ 
+							left  = query.substring(0, charInd); 
+							right = query.substring(charInd);
+							 
+							if(!finalEdit)
+								splits.add(new Pair<String, String>(left,right)); 
+							else 
+							{ 
+								int lastSpace = left.lastIndexOf(' ');
+								String leftQuery=""; 
+								if (lastSpace ==-1)
+									splits.add(new Pair<String, String>(left,right));
+								else 
+									leftQuery = left.substring(0, lastSpace);
+								int firstSpace = right.indexOf(' '); 
+								String rightQuery=""; 
+								if (firstSpace ==-1)
+									splits.add(new Pair<String, String>(left,right)); 
+								else
+									rightQuery = right.substring(firstSpace+1);
+							//	if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(0, lastSpace, wrongWords) && lm.IsInDictionary(firstSpace, query.length(), wrongWords))
+								if(lastSpace!=-1 && firstSpace!=-1 && lm.IsInDictionary(leftQuery) && lm.IsInDictionary(rightQuery))
+									splits.add(new Pair<String, String>(left,right));
+									
+							} 
+							
+							
+						} 
+						
+					}
+				}
+				//deletes
+				Set<Pair<String, ArrayList<Character>>>deletes = new HashSet<Pair<String, ArrayList<Character>>>();	 		
+				for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+				{
+					if(!splits.get(splitInd).getSecond().isEmpty())			
+					{ 
+						oneCandidate = splits.get(splitInd).getFirst() + splits.get(splitInd).getSecond().substring(1); // delete the first character in second splitted string
+																
+						ArrayList<Character> edits = new ArrayList<>(); 
+						edits.add('d');// for delete
+						if(!splits.get(splitInd).getFirst().isEmpty()) //xy typed as x
+						{ 
+							edits.add(splits.get(splitInd).getFirst().charAt(splits.get(splitInd).getFirst().length()-1));
+						} 
+						else 
+							edits.add('$'); // to indicate delete at beginning of query. 
+						edits.add(splits.get(splitInd).getSecond().charAt(0));											
+						deletes.add(new Pair<String,ArrayList<Character> >(oneCandidate,edits));
+						 
+					} 
+				}		
+			    //transporses
+				Set<Pair<String, ArrayList<Character>>>transporses = new HashSet<Pair<String, ArrayList<Character>>>();	 
+				for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+				{
+					if(splits.get(splitInd).getSecond().length()>1)			
+					{ 
+						oneCandidate = splits.get(splitInd).getFirst() + splits.get(splitInd).getSecond().charAt(1) 
+								     + splits.get(splitInd).getSecond().charAt(0) +  splits.get(splitInd).getSecond().substring(2); // transporse the first  and secondcharacter in second splitted string
+											
+						ArrayList<Character> edits = new ArrayList<>(); 
+						edits.add('t');// for transporse
+						edits.add(splits.get(splitInd).getSecond().charAt(0)); // xy typed as yx
+						edits.add(splits.get(splitInd).getSecond().charAt(1));										
+						transporses.add(new Pair<String,ArrayList<Character> >(oneCandidate,edits));
+						
+					} 
+				}	
+				// substitutes
+				Set<Pair<String, ArrayList<Character>>>replaces = new HashSet<Pair<String, ArrayList<Character>>>();	 
+				for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+				{
+					if(!splits.get(splitInd).getSecond().isEmpty())			
+					{ 
+						for(int alphInd = 0; alphInd < alphabet.length; alphInd++)
+						{ 
+							oneCandidate = splits.get(splitInd).getFirst() + alphabet[alphInd]  
+										 +  splits.get(splitInd).getSecond().substring(1); // replace the first  character in second splitted string by a character from alphabet						
+							
+							ArrayList<Character> edits = new ArrayList<>(); 
+							edits.add('s');// for substitutes
+							edits.add(alphabet[alphInd]); // y typed as x
+							edits.add(splits.get(splitInd).getSecond().charAt(0));																	
+							replaces.add(new Pair<String, ArrayList<Character>>(oneCandidate,edits));
+						 
+						} 
+					} 
+				}
+						
+				// inserts
+				Set<Pair<String, ArrayList<Character>>>inserts = new HashSet<Pair<String, ArrayList<Character>>>();	 
+				for(int splitInd = 0; splitInd < splits.size(); splitInd++)
+				{
+						for(int alphInd = 0; alphInd < alphabet.length; alphInd++)
+						{ 
+							oneCandidate = splits.get(splitInd).getFirst() + alphabet[alphInd]  
+										 +  splits.get(splitInd).getSecond().substring(0); // Insert before the first  character in second splitted string, a character from alphabet
+							ArrayList<Character> edits = new ArrayList<>(); 	
+							edits.add('i');// for substitutes
+							if(!splits.get(splitInd).getFirst().isEmpty()) //x typed as xy
+							{ 
+								edits.add(splits.get(splitInd).getFirst().charAt(splits.get(splitInd).getFirst().length()-1));
+							} 
+							else 
+								edits.add('$'); 
+							edits.add(alphabet[alphInd]);						
+							inserts.add(new Pair<String, ArrayList<Character>>(oneCandidate,edits));
+						} 			
+				}	
+				edit1.addAll(deletes);
+				edit1.addAll(transporses);
+				edit1.addAll(replaces); 
+				edit1.addAll(inserts);
+				return edit1;			
+			} 
+	// Generate all candidates for the target query with edit distance 1
+	public Set<Pair<String, ArrayList<Character>>> getEdit12(String query, boolean finalEdit, LanguageModel lm) throws Exception {
 		 
 			Set<Pair<String, ArrayList<Character>>> edit1 = new HashSet<Pair<String, ArrayList<Character>>>();	
 			String oneCandidate; 
@@ -164,11 +328,11 @@ public class CandidateGenerator implements Serializable {
 			// should we add the original query????
 			//???
 			boolean finalEdit = false; 
-			long startTime   = System.currentTimeMillis();
+		//	long startTime   = System.currentTimeMillis();
 			Set<Pair<String,ArrayList<Character>>> edit1, edit2;
 			// get candidates at edit distance 1
-			//int numEdit1 = 0; 
-			//int numEdit2 = 0;
+		//	int numEdit1 = 0; 
+		//	int numEdit2 = 0;
 			edit1  = getEdit1(query, finalEdit, lm);
 			finalEdit = true;
 			// get candidates at edit distance 2
@@ -192,11 +356,11 @@ public class CandidateGenerator implements Serializable {
 			//	System.out.println(numEdit2 + " out of " + edit2.size() + " edits 2, in dictionary ");
 			//	numEdit2 = 0;
 			}  
-			//System.out.println(numEdit1 + " out of " + edit1.size() + " edits 1, in dictionary ");
+		//	System.out.println(numEdit1 + " out of " + edit1.size() + " edits 1, in dictionary ");
 			
-			//long endTime   = System.currentTimeMillis();
-			//long totalTime = endTime - startTime;
-			//System.out.println("Candidate TIME: "+totalTime/1000+" seconds ");
+		//	long endTime   = System.currentTimeMillis();
+		//	long totalTime = endTime - startTime;
+		//	System.out.println("Candidate TIME: "+totalTime/1000+" seconds ");
 			return candidates;
 		}
 	public Set<String> getEdit1Orig(String query) throws Exception {

@@ -163,9 +163,14 @@ public class EmpiricalCostModel implements EditCostModel{
 				y = edits.get(editInd*3 + 2);
 				xyPair = new Pair<Character, Character>(x,y); 
 				
-				if(edits.get(editInd*3) == 'd' || edits.get(editInd*3) == 't')//delete or transporse
+				if(edits.get(editInd*3) == 'd')//delete
 				{ 										
 					p = ((double)(delete.count(xyPair ) + 1) )/(charBigram.count(xyPair) + cardinalityAlphabet); 
+					 
+				}
+				else if(edits.get(editInd*3) == 't')//transporse
+				{ 										
+					p = ((double)(transp.count(xyPair ) + 1) )/(charBigram.count(xyPair) + cardinalityAlphabet); 
 					 
 				}
 				else if(edits.get(editInd*3) == 'i')//insert

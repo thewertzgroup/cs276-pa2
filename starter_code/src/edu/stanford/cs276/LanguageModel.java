@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import edu.stanford.cs276.util.Dictionary;
 import edu.stanford.cs276.util.Pair;
@@ -26,7 +27,7 @@ public class LanguageModel implements Serializable {
 	
 	public boolean IsInDictionary(String query)
 	{ 
-		String[] words = query.trim().split("\\s+");		
+		String[] words = query.trim().split("\\s+");			
 		for(String word:words)
 		{ 
 			if(unigram.count(word)==0) //pruning
@@ -35,6 +36,33 @@ public class LanguageModel implements Serializable {
 			}
 		} 
 		return true; 
+	}
+	public boolean IsInDictionary(int firstIndex, int lastIndex, ArrayList<Pair<Integer, Integer>> errorIntervals)
+	{ 
+		
+		for(Pair<Integer, Integer> errorInterval: errorIntervals)
+		{ 
+			if( (firstIndex<=errorInterval.getFirst() &&  errorInterval.getFirst() <= lastIndex) || (firstIndex<=errorInterval.getSecond() &&  errorInterval.getSecond() <= lastIndex) )
+				return false; 
+		}
+		return true;  
+	}
+	
+	public ArrayList<Pair<Integer, Integer>> findError(String query)
+	{ 
+		ArrayList<Pair<Integer, Integer>> wrongWords = new ArrayList<>();  
+		String[] words = query.trim().split("\\s+");
+		int beginIndex, justAfterLastIndex; // with one extra index before the word and one extra index after it
+		for(String word:words)
+		{ 
+			if(unigram.count(word)==0) 
+			{ 
+				beginIndex = Math.max(0,query.indexOf(word)-1); // go back one index
+				justAfterLastIndex = Math.min(beginIndex + word.length() + 1, query.length()); // go forward one index
+				wrongWords.add(new Pair<Integer, Integer>(beginIndex, justAfterLastIndex));				
+			}
+		} 
+		return wrongWords; 
 	}
 	
 	public double computePQ(String query) // the function expects that the query is in the dictionary (call IsInDictionary first)

@@ -88,6 +88,7 @@ public class RunCorrector {
  
 		final double pRgivenEqualQ = 0.90; // if the query itself is a candidate.
 		double log_pRgivenQ, log_pQgivenR, log_pQ;  
+		long endTimeInsideFor = 0, startTimeInsideFor= 0; 
 	//	System.out.println("query = queriesFileReader.readLine())");
 		while ((query = queriesFileReader.readLine()) != null) {
 						
@@ -121,7 +122,7 @@ public class RunCorrector {
 				candidatesScores.add(new Pair<String, Double>(candidate.getFirst(), log_pQgivenR));
 			} 
 			*/
-			
+		//	startTimeInsideFor   = System.currentTimeMillis();
 			// generate the candidates (already pruned)
 			Set<Pair<String,ArrayList<Character>>> candidates = CandidateGenerator.get().getCandidates(query, languageModel);
 			
@@ -130,13 +131,10 @@ public class RunCorrector {
 			// first the query itself can be a candidate
 			if(languageModel.IsInDictionary(query))
 			{ 				 
-				if(languageModel.IsInDictionary(query))
-				{
-					log_pQ = languageModel.computePQ(query);				
-					log_pQgivenR = Math.log(pRgivenEqualQ) + BuildModels.MU*log_pQ; 
+				log_pQ = languageModel.computePQ(query);				
+				log_pQgivenR = Math.log(pRgivenEqualQ) + BuildModels.MU*log_pQ; 
 				//	System.out.println("pRgivenEqualQ  = " + pRgivenEqualQ + " log_pQ = " + log_pQ + " log_pQgivenR=" + log_pQgivenR);
-					candidatesScores.add(new Pair<String, Double>(query, log_pQgivenR));
-				} 
+				candidatesScores.add(new Pair<String, Double>(query, log_pQgivenR));
 			} 
 			
 			for(Pair<String, ArrayList<Character>> candidate: candidates)
@@ -149,14 +147,15 @@ public class RunCorrector {
 			} 
 			
 			//sort the candidates based on their score
+		//	System.out.println("# of candidates is " + candidatesScores.size()); 
 			Pair<String, Double> bestCandidate = Collections.max(candidatesScores, new Comparator<Pair<String, Double>>() 
 			{
 				@Override 
 				public int compare(Pair<String, Double> x, Pair<String, Double> y) 
 				{
-					if(x.getSecond().equals(y.getSecond()))
-						return x.getFirst().compareTo(y.getFirst());
-					else 
+				//	if(x.getSecond().equals(y.getSecond()))
+				//		return x.getFirst().compareTo(y.getFirst());
+				//	else 
 						return x.getSecond().compareTo(y.getSecond());
 				}
 			}
@@ -164,7 +163,7 @@ public class RunCorrector {
 			
 		//	String correctedQuery = candidatesScores.get(candidatesScores.size()-1).getFirst(); // highest score at the end
 			String correctedQuery = bestCandidate.getFirst(); // bestCandidate
-			
+		//	endTimeInsideFor   = System.currentTimeMillis();
 		//	System.out.println("lowest score = " + candidatesScores.get(0).getSecond().toString()); 
 		//	System.out.println("highest score = " + candidatesScores.get(candidatesScores.size()-1).getSecond().toString()); 
 			if ("extra".equals(extra)) {
@@ -186,15 +185,16 @@ public class RunCorrector {
 					yourCorrectCount++;
 				}
 				totalCount++;
-				System.out.println("totalCount = " + totalCount + ", yourCorrectCount = " + yourCorrectCount);				
+			//	System.out.println("totalCount = " + totalCount + ", yourCorrectCount = " + yourCorrectCount);				
 			}
-			System.out.println(correctedQuery);
+		//	System.out.println(correctedQuery);
 		}
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
+		//System.out.println("INSIDE FOR TIME: "+(endTimeInsideFor-startTimeInsideFor)/1000+" seconds ");
 		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
 		System.out.println("totalCount = " + totalCount);
-		System.out.println("yourCorrectCoun = " + yourCorrectCount);
+		System.out.println("yourCorrectCount = " + yourCorrectCount);
 	}	
 }
