@@ -64,6 +64,7 @@ public class LanguageModel implements Serializable
 			distance++;
 			k = Q.indexOf("  ", k+2);
 		}
+		if (Q.startsWith(" ") || Q.endsWith(" ")) distance++;
 
 		return distance;
 	}
