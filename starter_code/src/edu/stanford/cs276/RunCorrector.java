@@ -61,22 +61,44 @@ public class RunCorrector {
 			return;
 		}
 		
-		if (goldFilePath != null ){
-			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
-		}
+		
 		
 		// Load models from disk
-		System.out.println("Load models from disk");
+//		System.out.println("Load models from disk");
 		languageModel = LanguageModel.load(); 
 	//	System.out.println("loaded");
 		nsm = NoisyChannelModel.load();
 	//	System.out.println("loaded");
-		BufferedReader queriesFileReader = new BufferedReader(new FileReader(new File(queryFilePath)));
 		nsm.setProbabilityType(uniformOrEmpirical);
 		long loadTime   = System.currentTimeMillis();
 		long totalLoadTime = loadTime - startTime;
-		System.out.println("LOADING TIME: "+totalLoadTime/1000+" seconds ");
-		System.out.println("Total unigrams="+languageModel.unigram.termCount()+", Total bigrams="+languageModel.bigram.termCount());
+//		System.out.println("LOADING TIME: "+totalLoadTime/1000+" seconds ");
+//		System.out.println("Total unigrams="+languageModel.unigram.termCount()+", Total bigrams="+languageModel.bigram.termCount());
+		
+		/*double muVal = 1; 
+		int muNum = 1;
+		double lambdaVal = 0.01; 
+		int lambdaNum = 1; 
+		double pQCutoffVal = 1E-11;							   
+		int pQCutoffNum = 1;
+		for(int muLoop = 0; muLoop<muNum; muLoop++)
+			for(int lambdaLoop = 0; lambdaLoop< lambdaNum; lambdaLoop++)
+				for(int pQCutoffLoop = 0; pQCutoffLoop< pQCutoffNum; pQCutoffLoop++)
+				{ 
+					BuildModels.MU = muVal + muLoop*0.2; 
+					BuildModels.LAMBDA = lambdaVal + lambdaLoop*0.02; 
+					BuildModels.correctQueryCuttoff = Math.log(pQCutoffVal/(Math.pow(100,pQCutoffLoop)));					
+				
+				System.out.println("-----------"); 
+				System.out.println("MU=" + BuildModels.MU + " Lamb=" + BuildModels.LAMBDA + " cutoff=" + pQCutoffVal/Math.pow(100,pQCutoffLoop)); 
+		
+				
+				long startTime1   = System.currentTimeMillis();
+				*/
+		BufferedReader queriesFileReader = new BufferedReader(new FileReader(new File(queryFilePath)));
+		if (goldFilePath != null ){
+			goldFileReader = new BufferedReader(new FileReader(new File(goldFilePath)));
+		}
 		int totalCount = 0;
 		int yourCorrectCount = 0;
 		String query = null;
@@ -91,8 +113,7 @@ public class RunCorrector {
 		long endTimeInsideFor = 0, startTimeInsideFor= 0; 
 		String correctedQuery = " "; 
 	//	System.out.println("query = queriesFileReader.readLine())");
-		while ((query = queriesFileReader.readLine()) != null) {
-						
+		while ((query = queriesFileReader.readLine()) != null) {			
 			/*
 			 * Your code here
 			 */	
@@ -127,6 +148,9 @@ public class RunCorrector {
 			// generate the candidates (already pruned)
 			if(uniformOrEmpirical.equals("empirical"))
 			{ 
+				BuildModels.MU = 0.9;
+				BuildModels.LAMBDA = .01;
+				BuildModels.correctQueryCuttoff = Math.log(1E-11);
 			Set<Pair<String,ArrayList<Character>>> candidates = CandidateGenerator.get().getCandidates(query, languageModel);
 			
 			// score the candidates
@@ -148,7 +172,12 @@ public class RunCorrector {
 				//System.out.println("log_pRgivenQ  = " + log_pRgivenQ + " log_pQ = " + log_pQ + " log_pQgivenR=" + log_pQgivenR);
 				candidatesScores.add(new Pair<String, Double>(candidate.getFirst(), log_pQgivenR));
 			} 
-			
+			if (candidatesScores.size() == 0)
+			{ 
+				correctedQuery = query; 
+			}
+			else 
+			{ 
 			//sort the candidates based on their score
 		//	System.out.println("# of candidates is " + candidatesScores.size()); 
 			Pair<String, Double> bestCandidate = Collections.max(candidatesScores, new Comparator<Pair<String, Double>>() 
@@ -164,8 +193,10 @@ public class RunCorrector {
 			}
 			);
 			
+			
 		//	String correctedQuery = candidatesScores.get(candidatesScores.size()-1).getFirst(); // highest score at the end
 			correctedQuery = bestCandidate.getFirst(); // bestCandidate
+			} 
 		//	endTimeInsideFor   = System.currentTimeMillis();
 		//	System.out.println("lowest score = " + candidatesScores.get(0).getSecond().toString()); 
 		//	System.out.println("highest score = " + candidatesScores.get(candidatesScores.size()-1).getSecond().toString()); 
@@ -181,6 +212,9 @@ public class RunCorrector {
 			} 
 			else if(uniformOrEmpirical.equals("uniform"))
 			{ 
+				BuildModels.MU = 0.5;
+				BuildModels.LAMBDA = .03;
+				BuildModels.correctQueryCuttoff = Math.log(1E-11);
 				Set<Pair<String,Integer>> candidates = CandidateGenerator.get().getCandidatesUnif(query, languageModel);
 				
 				// score the candidates
@@ -203,7 +237,12 @@ public class RunCorrector {
 					//System.out.println("log_pRgivenQ  = " + log_pRgivenQ + " log_pQ = " + log_pQ + " log_pQgivenR=" + log_pQgivenR);
 					candidatesScores.add(new Pair<String, Double>(candidate.getFirst(), log_pQgivenR));
 				} 
-				
+				if (candidatesScores.size() == 0)
+				{ 
+					correctedQuery = query; 
+				}
+				else 
+				{ 
 				//sort the candidates based on their score
 			//	System.out.println("# of candidates is " + candidatesScores.size()); 
 				Pair<String, Double> bestCandidate = Collections.max(candidatesScores, new Comparator<Pair<String, Double>>() 
@@ -221,6 +260,7 @@ public class RunCorrector {
 				
 			//	String correctedQuery = candidatesScores.get(candidatesScores.size()-1).getFirst(); // highest score at the end
 				correctedQuery = bestCandidate.getFirst(); // bestCandidate
+				} 
 			//	System.out.println("#candidates = " + candidates.size());
 			}
 			// If a gold file was provided, compare our correction to the gold correction
@@ -233,14 +273,17 @@ public class RunCorrector {
 				totalCount++;
 			//	System.out.println("totalCount = " + totalCount + ", yourCorrectCount = " + yourCorrectCount);				
 			}
-		//	System.out.println(correctedQuery);
+			System.out.println(correctedQuery);
 		}
 		queriesFileReader.close();
 		long endTime   = System.currentTimeMillis();
 		long totalTime = endTime - startTime;
 		//System.out.println("INSIDE FOR TIME: "+(endTimeInsideFor-startTimeInsideFor)/1000+" seconds ");
 		System.out.println("RUNNING TIME: "+totalTime/1000+" seconds ");
-		System.out.println("totalCount = " + totalCount);
-		System.out.println("yourCorrectCount = " + yourCorrectCount);
+		//System.out.println("yourCorrectCount = " + yourCorrectCount);
+		//System.out.println("totalCount = " + totalCount);
+	//	System.out.println("Accuracy = " + ((double)(100*yourCorrectCount))/totalCount);
+		
+			//	}
 	}	
 }

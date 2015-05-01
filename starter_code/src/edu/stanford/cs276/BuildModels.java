@@ -3,9 +3,9 @@ package edu.stanford.cs276;
 
 public class BuildModels {
 
-	public static double MU = 0.6;
+	public static double MU = 0.9;
 	public static double LAMBDA = .01;
-	public static double correctQueryCuttoff = Math.log(0.000000000001); // if logp(Q) > correctQueryCuttoff, we decide that the query is correct
+	public static double correctQueryCuttoff = Math.log(0.0000000000001);//Math.log(0.0000000000001); // if logp(Q) > correctQueryCuttoff, we decide that the query is correct
 	public static LanguageModel languageModel;
 	public static NoisyChannelModel noisyChannelModel;
 
